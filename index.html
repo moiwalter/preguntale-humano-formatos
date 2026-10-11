@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pregúntale a un humano · 15 formatos</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=JetBrains+Mono:wght@500;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:"Lineal";src:url("media/lineal.woff2") format("woff2");font-weight:200 900}
+:root{--deep:#3c0058;--violet:#a43ff1;--pink:#f6cae6;--cream:#eee6e1;--ink:#12041b;--card:#1e0a2b;--muted:#8d7a99}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--ink);color:var(--cream);font-family:Rubik,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body{min-height:100dvh}
+.app{display:grid;grid-template-columns:auto minmax(280px,440px);gap:40px;justify-content:center;align-items:start;padding:28px 16px 40px;max-width:1200px;margin:0 auto}
+@media (max-width:860px){.app{grid-template-columns:minmax(0,1fr);gap:18px;padding:12px 16px 32px}}
+.side,.player{min-width:0}
+html,body{overflow-x:hidden}
+header.top{grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+header.top h1{font-family:Lineal;font-weight:900;font-size:28px;letter-spacing:-.03em}
+header.top h1 em{font-family:"Permanent Marker";font-style:normal;color:var(--pink);font-weight:400}
+header.top p{color:var(--muted);font-size:14px}
+.player{display:flex;flex-direction:column;align-items:center;gap:12px}
+.frame{position:relative;width:min(405px,calc(100vw - 32px),calc((100dvh - 190px)*9/16));aspect-ratio:9/16;border-radius:22px;overflow:hidden;background:#000;box-shadow:0 30px 80px -30px #a43ff155,0 0 0 1px #ffffff14}
+@media (max-width:860px){.frame{width:min(calc(100vw - 32px),calc((100dvh - 230px)*9/16))}}
+.stage{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0;overflow:hidden;background:var(--ink)}
+.stage video{position:absolute;object-fit:cover;background:#000;transition:all .55s cubic-bezier(.6,0,.2,1)}
+.ov{position:absolute;inset:0;pointer-events:none}
+.ov *{pointer-events:none}
+.tap{position:absolute;inset:0;display:grid;place-items:center;background:#12041bb0;cursor:pointer;z-index:5;border:0;color:inherit}
+.tap span{width:120px;height:120px;border-radius:50%;background:var(--cream);display:grid;place-items:center}
+.tap svg{width:44px;height:44px;margin-left:8px}
+.tap.hide{display:none}
+.controls{display:flex;gap:8px;align-items:center;width:min(405px,100%)}
+.controls button{background:#ffffff12;border:1px solid #ffffff1c;color:var(--cream);font:600 13px Rubik;padding:8px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.controls button:hover{background:#ffffff22}
+.bar{flex:1;height:6px;border-radius:3px;background:#ffffff1a;position:relative;cursor:pointer}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--pink);border-radius:3px}
+.bar b{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--violet)}
+.time{font:500 12px "JetBrains Mono";color:var(--muted);min-width:44px;text-align:right}
+.side{display:flex;flex-direction:column;gap:16px}
+.chips{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+@media (max-width:860px){.chips{display:flex;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}}
+.chips button{background:#ffffff0d;border:1px solid #ffffff17;color:var(--cream);font:700 13px "JetBrains Mono";padding:9px 0;border-radius:10px;cursor:pointer;min-width:52px}
+.chips button.on{background:var(--pink);color:var(--deep);border-color:var(--pink)}
+.chips button.rec::after{content:"★";font-size:10px;margin-left:3px;color:var(--violet)}
+.info h2{font-family:Lineal;font-weight:900;font-size:30px;letter-spacing:-.03em;line-height:1.05}
+.info .code{font:700 12px "JetBrains Mono";letter-spacing:.12em;color:var(--violet);text-transform:uppercase;margin-bottom:6px}
+.info p{color:#d8ccd6;font-size:15px;line-height:1.5;margin-top:10px}
+.info dl{margin-top:14px;display:grid;gap:10px}
+.info dt{font:700 11px "JetBrains Mono";letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.info dd{font-size:14px;line-height:1.45;color:#d8ccd6}
+.note{font-size:12.5px;line-height:1.5;color:var(--muted);border-top:1px solid #ffffff14;padding-top:14px}
+.note b{color:var(--cream);font-weight:600}
+.keys{font:500 11px "JetBrains Mono";color:var(--muted)}
+
+/* ===== piezas dentro del escenario (coordenadas 1080×1920) ===== */
+.cap{position:absolute;left:100px;width:820px;font:700 54px/1.15 Rubik;letter-spacing:-.02em;color:#fff;text-shadow:0 3px 14px #000c,0 1px 2px #000;transition:opacity .12s}
+.cap .em{display:inline-block;background:var(--deep);border:2px solid var(--pink);border-radius:8px;padding:0 10px;box-shadow:0 5px 0 var(--violet);text-shadow:none;margin:0 2px}
+.cap .w{opacity:.55;transition:opacity .08s}
+.cap .w.on{opacity:1}
+.lin{font-family:Lineal;font-weight:900;letter-spacing:-.04em}
+.mono{font-family:"JetBrains Mono",monospace}
+.marker{font-family:"Permanent Marker"}
+.abs{position:absolute}
+.fade{transition:opacity .45s, transform .55s cubic-bezier(.6,0,.2,1)}
+.pbox{position:absolute;border-radius:54px;padding:4px;background:conic-gradient(from var(--a,0deg),#a43ff1,#f6cae6,#eee6e1,#a43ff1,#3c0058,#a43ff1);transition:all .6s cubic-bezier(.6,0,.2,1)}
+.pbox .in{width:100%;height:100%;border-radius:50px;background:linear-gradient(180deg,#1e0a2b,#160620);position:relative;padding:44px 52px}
+.pbox .hd{display:flex;gap:14px;align-items:center;font:700 30px Lineal;color:#8d7a99}
+.pbox .hd svg{width:34px;height:34px}
+.pbox .tx{font:900 60px/1.08 Lineal;letter-spacing:-.035em;color:var(--cream);margin-top:22px;padding-right:90px}
+.pbox .ph{color:#ffffff40}
+.pbox .ph .marker{color:var(--pink);opacity:.8;font-weight:400;letter-spacing:0}
+.caret{display:inline-block;width:5px;height:.9em;background:var(--pink);vertical-align:-.1em;margin-left:4px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.send{position:absolute;right:38px;bottom:34px;width:84px;height:84px;border-radius:50%;background:var(--cream);display:grid;place-items:center;transition:all .25s}
+.send svg{width:38px;height:38px}
+.send.hot{box-shadow:0 0 0 10px #f6cae655,0 0 50px #f6cae6;transform:scale(1.08)}
+.send.dim{opacity:.25}
+.bubble{position:absolute;background:#2a1838;color:var(--cream);border-radius:40px 40px 10px 40px;padding:34px 42px;font:700 46px/1.15 Rubik;letter-spacing:-.01em}
+.tag{font:700 32px "JetBrains Mono";color:var(--pink);display:flex;gap:14px;align-items:center}
+.tag i{width:22px;height:22px;background:var(--pink);transform:rotate(45deg);display:inline-block}
+.dim-vid{filter:grayscale(1) brightness(.45) blur(3px)}
+.lit{filter:none}
+
+/* presentación del invitado */
+.gtag{position:absolute;left:60px;width:960px;top:1150px;opacity:0;transform:translateY(40px);transition:opacity .45s, transform .6s cubic-bezier(.2,.8,.2,1)}
+.gtag.on{opacity:1;transform:none}
+.gtag .row{display:flex;align-items:center;gap:26px}
+.gtag .logo{background:#fff;border-radius:22px;padding:22px 30px;box-shadow:0 18px 40px -16px #000c;transform:scale(.6);transition:transform .5s cubic-bezier(.3,1.4,.5,1) .15s}
+.gtag.on .logo{transform:scale(1)}
+.gtag .logo img{height:58px;display:block}
+.gtag .nm{font:800 58px/1 Rubik;letter-spacing:-.02em;color:#fff;text-shadow:0 3px 18px #000b}
+.gtag .rl{font:700 34px Rubik;color:#f6cae6;margin-top:10px;text-shadow:0 2px 12px #000b}
+.gtag .stat{margin-top:22px;display:flex;align-items:center;gap:22px;background:#12041bd9;border:2px solid #a43ff1;border-radius:22px;padding:18px 28px;opacity:0;transform:translateY(16px);transition:all .45s .35s}
+.gtag.on .stat{opacity:1;transform:none}
+.gtag .stat b{font:900 76px/1 Lineal;letter-spacing:-.04em;color:#f6cae6}
+.gtag .stat span{font:600 30px/1.2 Rubik;color:#eee6e1}
+.gtag .chips{display:flex;gap:12px;margin-top:16px;opacity:0;transition:opacity .4s .6s}
+.gtag.on .chips{opacity:1}
+.gtag .chips i{font:700 24px "JetBrains Mono";font-style:normal;letter-spacing:.06em;color:#eee6e1;background:#ffffff1f;border:1px solid #ffffff33;border-radius:999px;padding:8px 18px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <h1>Pregúntale a <em>un humano</em> · 15 formatos</h1>
+    <p>Ep. 01 · Ricardo, abogado · pregunta 1 completa · versión de prueba en baja calidad</p>
+  </header>
+
+  <div class="player">
+    <div class="frame" id="frame">
+      <div class="stage" id="stage">
+        <video id="vo" src="media/other.mp4" muted playsinline preload="auto"></video>
+        <video id="vm" src="media/main.mp4" playsinline preload="auto"></video>
+        <div class="ov" id="ov"></div>
+        <div class="ov" id="tagl" style="z-index:10"></div>
+        <div class="ov" id="ixl" style="z-index:11"></div>
+      </div>
+      <button class="tap" id="tap" aria-label="Reproducir"><span><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#3c0058"/></svg></span></button>
+    </div>
+    <div class="controls">
+      <button id="pp">▶︎ Play</button>
+      <div class="bar" id="bar"><i id="prog"></i><b id="joinmark"></b></div>
+      <span class="time" id="time">0:00</span>
+      <button id="jump" title="Saltar 5 s antes del cambio pregunta → respuesta">↪ cambio</button>
+    </div>
+  </div>
+
+  <aside class="side">
+    <div class="chips" id="chips"></div>
+    <div class="info" id="info"></div>
+    <p class="keys">← → cambia de formato · espacio pausa · el video sigue corriendo al cambiar</p>
+    <div class="note">
+      <b>Cómo leer esto.</b> Es la pregunta 1 entera (Christian, 30 s) y la respuesta de Ricardo (70 s), con el mismo audio en los 15 formatos. Todo está en baja calidad y es para elegir, no es un video terminado.<br><br>
+      <b>Christian escuchando.</b> En los formatos donde los dos están en pantalla, el que escucha es un clip <b>generado con AI</b> (Kling 3.0) a partir de un cuadro real de cada uno. Así resolvemos el "congelado".<br><br>
+      <b>F08.</b> La respuesta de la máquina es <b>real</b>: la misma pregunta hecha a gpt-6-astra el 10-oct, sin editar.
+    </div>
+  </aside>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script src="data.js"></script>
+<script src="intro.js"></script>
+<script>
+const EP = window.EP, J = EP.join;
+EP.guest = { name: 'Ricardo Rodríguez', role: 'CEO y cofundador · Lawgic', short: 'Ricardo Rodríguez · CEO de Lawgic', stat: '+12,000', statLabel: 'profesionales del derecho en 10 países confían en Lawgic', chips: ['Legaltech · México', 'Stanford GSB'] };
+const $ = s => document.querySelector(s);
+const vm = $('#vm'), vo = $('#vo'), ov = $('#ov'), stage = $('#stage');
+const el = (tag, cls, html, style) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; if (style) Object.assign(e.style, style); return e; };
+const px = o => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, typeof v === 'number' && !['opacity', 'zIndex', 'lineHeight', 'flex'].includes(k) ? v + 'px' : v]));
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const fmt = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+const SPARK = '<svg viewBox="0 0 40 40"><path d="M20 2C21.5 13 27 18.5 38 20C27 21.5 21.5 27 20 38C18.5 27 13 21.5 2 20C13 18.5 18.5 13 20 2Z" fill="#f6cae6"/></svg>';
+const ARROW = '<svg viewBox="0 0 34 34"><path d="M17 28V7M8 15l9-9 9 9" fill="none" stroke="#2a0d3a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+// ---------- piezas reutilizables ----------
+function captions(parent, style = {}) {
+  const c = el('div', 'cap', '', px(style)); parent.appendChild(c); let last = null;
+  const f = t => {
+    const cap = EP.caps.find(k => t >= k.s && t < k.e);
+    if (cap !== last) {
+      last = cap;
+      c.innerHTML = cap ? cap.words.map(w => `<span class="w${w.em ? ' em' : ''}" data-s="${w.s}">${w.w}</span>`).join(' ') : '';
+    }
+    if (cap) c.querySelectorAll('.w').forEach(s => s.classList.toggle('on', t >= +s.dataset.s - 0.02));
+  };
+  f.el = c; return f;
+}
+function guestTag(parent, from, dur = 5.2, top) {
+  const G = EP.guest;
+  const g = el('div', 'gtag', `<div class="row"><div class="logo"><img src="media/lawgic-logo.png" alt="Lawgic"></div><div><div class="nm">${G.name}</div><div class="rl">${G.role}</div></div></div><div class="stat"><b>${G.stat}</b><span>${G.statLabel}</span></div><div class="chips">${G.chips.map(c => `<i>${c}</i>`).join('')}</div>`);
+  if (top) { g.style.top = top + 'px'; g.querySelector('.chips').remove(); }
+  parent.appendChild(g);
+  return t => { const on = t >= from && t < from + dur; g.classList.toggle('on', on); return on; };
+}
+function typed(t) { // la pregunta escrita, al ritmo de Christian
+  const k = clamp((t - EP.qTypeStart) / (EP.qTypeEnd - EP.qTypeStart));
+  return EP.qText.slice(0, Math.round(EP.qText.length * k));
+}
+function promptBox(parent, geom) {
+  const b = el('div', 'pbox', `<div class="in"><div class="hd">${SPARK}<span class="hdt">Pregunta de Christian</span></div><div class="tx"></div><div class="send">${ARROW}</div></div>`, px(geom));
+  parent.appendChild(b);
+  const tx = b.querySelector('.tx'), send = b.querySelector('.send');
+  return {
+    el: b,
+    tick(t) {
+      b.style.setProperty('--a', (t * 40 % 360) + 'deg');
+      const s = typed(t);
+      tx.innerHTML = s ? s + '<span class="caret"></span>' : '<span class="ph">Pregúntale a <span class="marker">un humano</span></span><span class="caret"></span>';
+      send.classList.toggle('hot', t > EP.qTypeEnd && t < J);
+      send.classList.toggle('dim', t >= J);
+    }
+  };
+}
+function vid(v, g) { Object.assign(v.style, px({ left: 0, top: 0, width: 1080, height: 1920, borderRadius: 0, opacity: 1, zIndex: 0, filter: 'none', ...g })); }
+const FULL = { left: 0, top: 0, width: 1080, height: 1920 };
+const HIDE = { opacity: 0 };
+const seg = t => (t < J ? 'q' : 'a');
+
+// ---------- los 15 formatos ----------
+const F = [
+{ id: 'F01', name: 'Tres Tercios', idea: 'Título arriba, video al medio, subtítulos abajo. El formato de podcast que ya existe.',
+  ok: 'Barato, se arma en una hora, nadie se confunde.', risk: 'Genérico. Nada lo hace de Christian.',
+  build(o) {
+    o.appendChild(el('div', 'abs', '', px({ left: 0, top: 0, width: 1080, height: 430, background: '#12041b' })));
+    o.appendChild(el('div', 'abs', '', px({ left: 0, top: 1490, width: 1080, height: 430, background: '#12041b' })));
+    const t1 = el('div', 'abs lin', 'Pregúntale a <span class="marker" style="color:#f6cae6;font-weight:400;letter-spacing:0">un humano</span>', px({ left: 80, top: 120, fontSize: 64 }));
+    const t2 = el('div', 'abs', '', px({ left: 80, top: 230, width: 920, font: '700 40px/1.2 Rubik', color: '#d8ccd6' }));
+    o.append(t1, t2);
+    const cap = captions(o, { top: 1560 });
+    return t => { t2.textContent = seg(t) === 'q' ? 'Christian pregunta' : 'Responde ' + EP.guest.short; cap(t); };
+  },
+  layout: s => ({ vm: { left: 0, top: 430, width: 1080, height: 1060 }, vo: HIDE }) },
+
+{ id: 'F02', name: 'La Llamada', idea: 'Interfaz de videollamada. Quien habla va a pantalla completa y el otro queda en el recuadro chico.',
+  ok: 'Todo el mundo lee "llamada" al instante. Se siente íntimo.', risk: 'El recuadro chico necesita al otro escuchando. Acá lo resolvimos con el clip generado.',
+  build(o) {
+    o.appendChild(el('div', 'abs', '', px({ left: 0, top: 0, width: 1080, height: 300, background: 'linear-gradient(#000a,#0000)' })));
+    const nm = el('div', 'abs', '', px({ left: 70, top: 90, font: '700 46px Rubik', color: '#fff' }));
+    const tm = el('div', 'abs mono', '', px({ left: 70, top: 152, fontSize: 32, color: '#f6cae6' }));
+    o.append(nm, tm);
+    const bar = el('div', 'abs', ['🎙', '📷', '💬'].map(i => `<span style="width:120px;height:120px;border-radius:50%;background:#ffffff26;backdrop-filter:blur(10px);display:grid;place-items:center;font-size:48px">${i}</span>`).join('') + `<span style="width:120px;height:120px;border-radius:50%;background:#a43ff1;display:grid;place-items:center;font-size:48px">✆</span>`, px({ left: 0, width: 1080, top: 1720, display: 'flex', justifyContent: 'center', gap: 50 }));
+    o.appendChild(bar);
+    const cap = captions(o, { top: 1440 });
+    return t => { nm.textContent = seg(t) === 'q' ? 'Christian Van Der Henst' : EP.guest.short; tm.textContent = '● ' + fmt(t + 12); cap(t); };
+  },
+  layout: s => ({ vm: FULL, vo: { left: 700, top: 230, width: 320, height: 520, borderRadius: 34, zIndex: 2 } }) },
+
+{ id: 'F03', name: 'La Caja de Prompt', rec: true, idea: 'La pregunta se escribe en la caja de la intro, como si Christian le escribiera a ChatGPT. Al enviar, la respuesta no la da un modelo: la da una persona.',
+  ok: 'Nombre y diseño son lo mismo. La pregunta queda arriba toda la respuesta, así quien entra a mitad entiende.', risk: 'Si se parece demasiado a ChatGPT, es de OpenAI y no de Christian. Por eso va con la caja de la intro, en sus colores.',
+  dock: true,
+  build(o) {
+    const pb = promptBox(o, { left: 40, top: 1330, width: 1000, height: 330 });
+    const bub = el('div', 'bubble fade', EP.qText, px({ right: 40, top: 110, width: 860, opacity: 0, transform: 'translateY(30px)' }));
+    const tag = el('div', 'abs tag fade', '<i></i>' + EP.guest.short + ' · responde', px({ left: 60, top: 400, opacity: 0 }));
+    o.append(bub, tag);
+    const cap = captions(o, { top: 1500 });
+    return t => {
+      const a = t >= J;
+      pb.tick(t);
+      Object.assign(pb.el.style, a ? px({ top: 110, left: 180, width: 860, height: 250, opacity: 0 }) : px({ top: 1330, left: 40, width: 1000, height: 330, opacity: t < EP.qTypeStart ? 0 : 1 }));
+      bub.style.opacity = a ? 1 : 0; bub.style.transform = a ? 'none' : 'translateY(30px)';
+      tag.style.opacity = a ? 1 : 0;
+      cap.el.style.top = (a ? 1560 : 1120) + 'px'; cap(t);
+    };
+  },
+  layout: s => s === 'q' ? { vm: FULL, vo: HIDE } : { vm: { left: 40, top: 480, width: 1000, height: 1380, borderRadius: 44 }, vo: HIDE } },
+
+{ id: 'F04', tagTop: 1620, name: 'El Hilo', idea: 'Conversación de Telegram con mensajes de video: la pregunta salió el 5-oct, la respuesta llegó el 8-oct.',
+  ok: 'Muestra lo asíncrono tal cual es. Las fechas son las reales.', risk: 'La cara queda en un círculo y pierde peso. Se parece al formato de María.',
+  build(o) {
+    o.appendChild(el('div', 'abs', '', px({ inset: 0, background: 'radial-gradient(120% 80% at 50% 30%,#2a1040,#12041b)' })));
+    const hd = el('div', 'abs', `<div style="width:96px;height:96px;border-radius:50%;background:#a43ff1;display:grid;place-items:center;font:800 40px Rubik;color:#fff">R</div><div><div style="font:700 44px Rubik">Ricardo</div><div style="font:500 30px Rubik;color:#8d7a99" class="st">en línea</div></div>`, px({ left: 0, top: 0, width: 1080, height: 230, padding: '100px 60px 0', display: 'flex', gap: 28, alignItems: 'center', background: '#1e0a2bdd', borderBottom: '1px solid #ffffff14' }));
+    o.appendChild(hd);
+    const d1 = el('div', 'abs mono', '5 oct', px({ left: 0, width: 1080, top: 290, textAlign: 'center', fontSize: 28, color: '#8d7a99' }));
+    const d2 = el('div', 'abs mono fade', '8 oct', px({ left: 0, width: 1080, top: 900, textAlign: 'center', fontSize: 28, color: '#8d7a99', opacity: 0 }));
+    const ck = el('div', 'abs mono', '', px({ right: 110, top: 840, fontSize: 28, color: '#f6cae6' }));
+    o.append(d1, d2, ck);
+    const cap = captions(o, { top: 1620, left: 100 });
+    return t => { d2.style.opacity = t >= J ? 1 : 0; ck.textContent = t >= J ? '0:30 ✓✓' : ''; hd.querySelector('.st').textContent = t >= J ? 'grabando video…' : 'en línea'; cap(t); };
+  },
+  layout: s => s === 'q'
+    ? { vm: { left: 300, top: 360, width: 700, height: 700, borderRadius: 999, zIndex: 1 }, vo: HIDE }
+    : { vm: { left: 80, top: 960, width: 640, height: 640, borderRadius: 999, zIndex: 1 }, vo: { left: 760, top: 360, width: 240, height: 240, borderRadius: 999, filter: 'saturate(.7)', zIndex: 1 } } },
+
+{ id: 'F05', name: 'La Carta', idea: 'La pregunta es una nota en papel que Christian manda. Cuando Ricardo responde, la nota queda arriba con un sello.',
+  ok: 'El papel se siente pensado, lo contrario de lo automático.', risk: 'Más nostálgico que tech.',
+  build(o) {
+    const n = el('div', 'abs fade', `<div class="mono" style="font-size:24px;letter-spacing:.14em;color:#3c0058aa">PARA: RICARDO · DE: CHRISTIAN</div><div class="tx" style="font:800 54px/1.12 Rubik;color:#2a0d3a;margin-top:18px"></div><div class="stamp marker" style="position:absolute;right:40px;bottom:-30px;transform:rotate(-12deg);border:6px solid #a43ff1;color:#a43ff1;font-size:44px;padding:6px 22px;border-radius:14px;opacity:0;transition:opacity .3s,transform .3s">RESPONDIDA · 8 OCT</div>`, px({ left: 90, top: 1290, width: 900, padding: '44px 50px 60px', background: '#eee6e1', borderRadius: 6, transform: 'rotate(-2deg)', boxShadow: '0 30px 60px -20px #000c' }));
+    o.appendChild(n);
+    const tx = n.querySelector('.tx'), st = n.querySelector('.stamp');
+    const cap = captions(o, { top: 1500 });
+    return t => {
+      const a = t >= J; tx.textContent = a ? EP.qText : (typed(t) || '…');
+      Object.assign(n.style, a ? px({ top: 90, left: 140, width: 800, transform: 'rotate(1.5deg) scale(.82)', transformOrigin: '50% 0' }) : px({ top: 1290, left: 90, width: 900, transform: 'rotate(-2deg)' }));
+      st.style.opacity = a ? 1 : 0; n.style.opacity = t < EP.qTypeStart - 0.5 ? 0 : 1;
+      cap(a || t < EP.qTypeStart - 0.5 ? t : -1);
+    };
+  },
+  layout: s => ({ vm: FULL, vo: HIDE }) },
+
+{ id: 'F06', name: 'Pregunta Fija', idea: 'Christian pregunta y sus palabras salen gigantes. Al cortar a Ricardo, la pregunta se encoge y queda fija arriba toda la respuesta.',
+  ok: 'La pregunta acompaña a la respuesta aunque Christian no esté. El más limpio.', risk: 'Es más un tratamiento que un formato.',
+  build(o) {
+    o.appendChild(el('div', 'abs', '', px({ left: 0, top: 0, width: 1080, height: 900, background: 'linear-gradient(#12041bee,#12041b00)' })));
+    const big = el('div', 'abs lin', '', px({ left: 70, top: 200, width: 940, fontSize: 108, lineHeight: 1, color: '#eee6e1' }));
+    const pin = el('div', 'abs fade', `<div class="mono" style="font-size:26px;letter-spacing:.14em;color:#f6cae6">PREGUNTA 1</div><div style="font:700 44px/1.15 Rubik;margin-top:12px">${EP.qText}</div>`, px({ left: 60, top: 100, width: 960, padding: '30px 40px', background: '#3c0058e6', borderLeft: '8px solid #f6cae6', borderRadius: 18, opacity: 0 }));
+    o.append(big, pin);
+    const cap = captions(o, { top: 1500 });
+    return t => {
+      const a = t >= J;
+      if (!a) { const ws = t < IntroIX.D + 0.4 ? [] : EP.words.filter(w => w.who === 'q' && w.s <= t && w.s > t - 2.6).slice(-5); big.innerHTML = ws.map(w => `<span style="${/frontera|frontier|contrato|confiable|bufete|Richie/.test(w.w) ? 'color:#f6cae6' : ''}">${w.w}</span>`).join(' '); }
+      big.style.opacity = a ? 0 : 1; pin.style.opacity = a ? 1 : 0; cap(a ? t : -1);
+    };
+  },
+  layout: s => ({ vm: FULL, vo: HIDE }) },
+
+{ id: 'F07', name: 'Expediente', idea: 'Cada profesión entra como un caso con su ficha. Ricardo responde y el episodio cierra con un veredicto: ¿reemplazable?',
+  ok: 'Tiene un final que paga. Los casos numerados arman colección: "haz el de mi profesión".', risk: 'El veredicto lo ponemos nosotros. Acá sale de su frase ("siempre va a haber un gap").',
+  build(o) {
+    const f = el('div', 'abs', `<div class="mono" style="font-size:26px;letter-spacing:.16em;color:#a43ff1">CASO 001 · DERECHO</div><div style="font:800 52px Rubik;margin-top:10px">Ricardo Rodríguez</div><div style="font:500 30px Rubik;color:#d8ccd6;margin-top:6px">CEO de Lawgic · abogado</div>`, px({ left: 60, top: 100, padding: '30px 40px', background: '#eee6e1', color: '#2a0d3a', borderRadius: 12, boxShadow: '0 20px 40px -20px #000' }));
+    f.querySelectorAll('div')[1].style.color = '#2a0d3a'; f.querySelectorAll('div')[2].style.color = '#3c0058aa';
+    const v = el('div', 'abs fade', `<div class="mono" style="font-size:30px;letter-spacing:.14em;color:#f6cae6">${EP.verdict.q.toUpperCase()}</div><div class="lin" style="font-size:150px;line-height:.95;margin-top:10px">${EP.verdict.a}</div><div style="font:700 40px/1.2 Rubik;margin-top:24px;color:#eee6e1">${EP.verdict.quote}</div>`, px({ left: 0, top: 0, width: 1080, height: 1920, padding: '640px 90px', background: '#12041be6', opacity: 0 }));
+    o.append(f, v);
+    const cap = captions(o, { top: 1500 });
+    return t => { const end = t > EP.dur - 7; v.style.opacity = end ? 1 : 0; cap(end ? -1 : t); };
+  },
+  layout: s => ({ vm: FULL, vo: HIDE }) },
+
+{ id: 'F08', tagAt: J + 5.6, name: 'Humano vs Máquina', idea: 'La misma pregunta se le hizo a la AI. Su respuesta pasa rápido, gris y genérica, mientras Ricardo saluda. Después habla la persona.',
+  ok: 'El contraste es el gancho y no hay que explicarlo.', risk: 'Aquí se ve el riesgo: gpt-6-astra respondió bien y dijo casi lo mismo que Ricardo. El contraste pierde fuerza.',
+  build(o) {
+    const p = el('div', 'abs fade', `<div class="mono" style="font-size:26px;color:#8d7a99;letter-spacing:.1em">LA MÁQUINA · ${EP.gpt.model} · respuesta real, ${EP.gpt.fecha}</div><div class="sc" style="position:relative;height:1180px;overflow:hidden;margin-top:24px;-webkit-mask-image:linear-gradient(#000 70%,transparent)"><div class="tx" style="font:500 34px/1.45 Rubik;color:#b9aec0;white-space:pre-wrap"></div></div>`, px({ left: 0, top: 0, width: 1080, height: 1920, padding: '180px 80px', background: '#1a1320f2', opacity: 0 }));
+    p.querySelector('.tx').textContent = EP.gpt.texto.replace(/\*\*/g, '');
+    const strip = el('div', 'abs mono fade', `MÁQUINA: ${EP.gpt.texto.split(/\s+/).length} palabras en 9 s · HUMANO: ↓`, px({ left: 60, top: 110, padding: '18px 26px', background: '#00000099', borderRadius: 12, fontSize: 26, color: '#b9aec0', opacity: 0 }));
+    o.append(p, strip);
+    const tx = p.querySelector('.tx');
+    const cap = captions(o, { top: 1500 });
+    return t => {
+      const k = (t - J) / 5.4, on = k >= 0 && k < 1;
+      p.style.opacity = on ? 1 : 0; tx.style.transform = `translateY(${-clamp(k) * 900}px)`;
+      strip.style.opacity = t >= J + 5.4 ? 1 : 0; cap(on ? -1 : t);
+    };
+  },
+  layout: s => ({ vm: FULL, vo: HIDE }) },
+
+{ id: 'F09', name: 'Set Compartido', idea: 'Los dos en un mismo set de marca. Quien habla está iluminado y el otro queda a oscuras, escuchando (clip generado).',
+  ok: 'Es el que más parece podcast.', risk: 'En la prueba van en ventanas, sin recorte. El de verdad recorta a los dos e iguala el color: costo alto.',
+  build(o) {
+    o.appendChild(el('div', 'abs', '', px({ inset: 0, background: 'radial-gradient(60% 40% at 50% 45%,#5a1d82,#12041b 70%)' })));
+    o.appendChild(el('div', 'abs', '', px({ left: 0, top: 1380, width: 1080, height: 540, background: 'linear-gradient(#2a0d3a,#12041b)', borderTop: '3px solid #a43ff1' })));
+    o.appendChild(el('div', 'abs lin', 'Pregúntale a <span class="marker" style="color:#f6cae6;font-weight:400;letter-spacing:0">un humano</span>', px({ left: 0, width: 1080, textAlign: 'center', top: 150, fontSize: 56 })));
+    const n1 = el('div', 'abs mono', 'CHRISTIAN', px({ left: 60, top: 1310, fontSize: 26, letterSpacing: '.14em' }));
+    const n2 = el('div', 'abs mono', 'RICARDO', px({ left: 560, top: 1310, fontSize: 26, letterSpacing: '.14em' }));
+    o.append(n1, n2);
+    const cap = captions(o, { top: 1480 });
+    return t => { const q = seg(t) === 'q'; n1.style.color = q ? '#f6cae6' : '#8d7a99'; n2.style.color = q ? '#8d7a99' : '#f6cae6'; cap(t); };
+  },
+  layout: s => s === 'q'
+    ? { vm: { left: 40, top: 300, width: 480, height: 990, borderRadius: 30, zIndex: 1 }, vo: { left: 560, top: 300, width: 480, height: 990, borderRadius: 30, filter: 'brightness(.35) saturate(.6)' } }
+    : { vm: { left: 560, top: 300, width: 480, height: 990, borderRadius: 30, zIndex: 1 }, vo: { left: 40, top: 300, width: 480, height: 990, borderRadius: 30, filter: 'brightness(.35) saturate(.6)' } } },
+
+{ id: 'F10', name: 'Marcador', idea: 'Barras tipo historia y un número gigante por pregunta. Se ve cuánto falta y queda "una más". Va encima de la Pregunta Fija.',
+  ok: 'Promete algo corto y lo cumple. Ayuda a la retención.', risk: 'Es mecánica, no identidad. Capa encima de F03 o F06.',
+  build(o) {
+    const bars = el('div', 'abs', [0, 1, 2, 3].map(i => `<div style="flex:1;height:10px;border-radius:5px;background:#ffffff40;overflow:hidden"><i style="display:block;height:100%;width:0;background:#fff"></i></div>`).join(''), px({ left: 40, top: 40, width: 1000, display: 'flex', gap: 12 }));
+    const lbl = el('div', 'abs mono', '', px({ left: 40, top: 70, fontSize: 26, color: '#fff', letterSpacing: '.1em' }));
+    const big = el('div', 'abs lin fade', '1', px({ left: 0, width: 1080, top: 480, textAlign: 'center', fontSize: 700, lineHeight: 1, color: '#f6cae6', textShadow: '0 20px 60px #000a' }));
+    const pin = el('div', 'abs fade', `<div style="font:700 42px/1.15 Rubik">${EP.qText}</div>`, px({ left: 60, top: 150, width: 960, padding: '28px 36px', background: '#3c0058e6', borderLeft: '8px solid #f6cae6', borderRadius: 18, opacity: 0 }));
+    o.append(bars, lbl, big, pin);
+    const fills = bars.querySelectorAll('i');
+    const cap = captions(o, { top: 1500 });
+    return t => {
+      fills[0].style.width = clamp(t / J) * 100 + '%'; fills[1].style.width = clamp((t - J) / (EP.dur - J)) * 100 + '%';
+      lbl.textContent = t < J ? 'PREGUNTA 1 DE 2' : 'RESPUESTA 1 DE 2';
+      const g = t > 3.8 && t < 5.4; big.style.opacity = g ? 1 : 0; pin.style.opacity = t >= J ? 1 : 0; cap(g ? -1 : t);
+    };
+  },
+  layout: s => ({ vm: FULL, vo: HIDE }) },
+
+{ id: 'F11', name: 'Lado a Lado', idea: 'Los dos en columnas. La de quien habla se abre a casi toda la pantalla; la otra queda angosta y en gris, en espera.',
+  ok: 'El cambio de ancho marca el turno muy claro.', risk: 'La columna angosta muestra a alguien quieto: en gris y desenfocada pasa.',
+  build(o) { const cap = captions(o, { top: 1500, left: 330, width: 700 }); return t => cap(t); },
+  layout: s => s === 'q'
+    ? { vm: { left: 0, top: 0, width: 830, height: 1920 }, vo: { left: 840, top: 0, width: 240, height: 1920, filter: 'grayscale(1) brightness(.5) blur(2px)' } }
+    : { vm: { left: 250, top: 0, width: 830, height: 1920 }, vo: { left: 0, top: 0, width: 240, height: 1920, filter: 'grayscale(1) brightness(.5) blur(2px)' } } },
+
+{ id: 'F12', name: 'La Notificación', idea: 'La pregunta le llega a Ricardo como notificación. Cuando responde, queda chica arriba, como el mensaje que contesta.',
+  ok: 'Muestra lo que de verdad pasa. Todos reconocen una notificación en medio segundo.', risk: 'Hay que pasarla a la marca o se ve como captura de iOS.',
+  build(o) {
+    const n = el('div', 'abs fade', `<div style="display:flex;gap:22px;align-items:center"><div style="width:76px;height:76px;border-radius:18px;background:linear-gradient(135deg,#a43ff1,#3c0058);display:grid;place-items:center">${SPARK.replace('viewBox', 'width="40" height="40" viewBox')}</div><div style="flex:1"><div style="display:flex;justify-content:space-between;font:700 32px Rubik"><span>Christian Van Der Henst</span><span style="font-weight:500;color:#8d7a99;font-size:28px">ahora</span></div><div style="font:500 34px/1.25 Rubik;color:#eee6e1;margin-top:6px">${EP.qText}</div></div></div>`, px({ left: 40, top: 70, width: 1000, padding: '30px 34px', background: '#1e0a2bee', backdropFilter: 'blur(20px)', borderRadius: 44, border: '1px solid #ffffff1c', opacity: 0, transform: 'translateY(-260px)' }));
+    o.appendChild(n);
+    const cap = captions(o, { top: 1500 });
+    return t => { const on = t > J - 2.2; n.style.opacity = on ? 1 : 0; n.style.transform = on ? (t >= J ? 'scale(.86)' : 'none') : 'translateY(-260px)'; n.style.transformOrigin = '50% 0'; cap(t); };
+  },
+  layout: s => ({ vm: FULL, vo: HIDE }) },
+
+{ id: 'F13', name: 'Terminal', idea: 'La pregunta se ejecuta como comando y el "proceso" que responde es una persona. Tiempo de respuesta: 3 días (5 → 8 oct, real).',
+  ok: 'Habla el idioma de Platzi. Lo asíncrono se vuelve chiste.', risk: 'Aleja a quien no programa, y Ricardo es abogado.',
+  build(o) {
+    const w = el('div', 'abs mono fade', `<div style="display:flex;gap:12px;margin-bottom:22px"><i style="width:22px;height:22px;border-radius:50%;background:#ff5f57"></i><i style="width:22px;height:22px;border-radius:50%;background:#febc2e"></i><i style="width:22px;height:22px;border-radius:50%;background:#28c840"></i></div><div class="tx" style="font-size:34px;line-height:1.45;white-space:pre-wrap;color:#eee6e1"></div>`, px({ left: 40, top: 1270, width: 1000, padding: '28px 38px', background: '#0b0410ee', border: '1px solid #a43ff155', borderRadius: 24 }));
+    o.appendChild(w);
+    const tx = w.querySelector('.tx');
+    const cap = captions(o, { top: 1500 });
+    return t => {
+      const a = t >= J;
+      if (!a) tx.innerHTML = `<span style="color:#a43ff1">cvander@sf</span> <span style="color:#f6cae6">$</span> pregunta --a ricardo --tema derecho \\\n  "${typed(t)}<span class="caret"></span>"`;
+      else tx.innerHTML = `<span style="color:#28c840">✓</span> enviado 5 oct · <span style="color:#f6cae6">humano_01</span> (Ricardo Rodríguez, CEO de Lawgic)\n<span style="color:#8d7a99">tiempo de respuesta: 3 días · streaming…</span>`;
+      Object.assign(w.style, a ? px({ top: 90, transform: 'scale(.9)', transformOrigin: '50% 0' }) : px({ top: 1270, transform: 'none' }));
+      w.style.opacity = t < EP.qTypeStart - 0.5 ? 0 : 1; cap(a || t < EP.qTypeStart - 0.5 ? t : -1);
+    };
+  },
+  layout: s => ({ vm: FULL, vo: HIDE }) },
+
+{ id: 'F14', tagAt: J + 3.8, name: 'No Soy un Robot', idea: 'Antes de responder, Ricardo pasa el captcha: la casilla se marca, "verificado: humano", y empieza a hablar. Encima de la Caja de Prompt.',
+  ok: 'La presentación del invitado convertida en chiste sobre AI. Se repite en cada episodio.', risk: 'Es un momento, no un formato completo.',
+  dock: true,
+  build(o) {
+    const pb = promptBox(o, { left: 40, top: 1330, width: 1000, height: 330 });
+    const c = el('div', 'abs fade', `<div style="display:flex;align-items:center;gap:34px"><div class="bx" style="width:84px;height:84px;border:5px solid #8d7a99;border-radius:10px;display:grid;place-items:center;font:800 64px Rubik;color:#28c840;background:#fff"></div><div class="lb" style="font:500 44px Rubik;color:#2a0d3a">No soy un robot</div></div><div class="ok mono" style="margin-top:28px;font-size:30px;color:#3c0058;opacity:0;transition:opacity .2s">✓ verificado: humano · Ricardo, CEO de Lawgic</div>`, px({ left: 140, top: 1180, width: 800, padding: '44px 50px', background: '#f9f6f4', borderRadius: 20, boxShadow: '0 40px 80px -30px #000', opacity: 0 }));
+    o.appendChild(c);
+    const bx = c.querySelector('.bx'), ok = c.querySelector('.ok');
+    const cap = captions(o, { top: 1500 });
+    return t => {
+      pb.tick(t); pb.el.style.opacity = t >= J || t < EP.qTypeStart ? 0 : 1;
+      const k = t - J, on = k >= 0 && k < 3.6;
+      c.style.opacity = on ? 1 : 0; bx.textContent = k > 1.1 ? '✓' : ''; ok.style.opacity = k > 1.4 ? 1 : 0;
+      cap.el.style.top = (t >= J ? 1500 : 1120) + 'px'; cap(on ? -1 : t);
+    };
+  },
+  layout: s => ({ vm: FULL, vo: HIDE }) },
+
+{ id: 'F15', name: 'Encuesta', idea: 'La pregunta entra como encuesta de historia. Ricardo responde y su voto queda marcado cuando dice "ve con un experto".',
+  ok: 'La gente vota antes de escuchar y comenta si el experto le lleva la contra.', risk: 'Los porcentajes deben salir de una encuesta real de Christian. Aquí van sin números.',
+  build(o) {
+    const p = el('div', 'abs fade', `<div style="font:800 48px/1.15 Rubik;color:#2a0d3a;text-align:center">¿Le pasarías tu contrato a la AI en vez de a un abogado?</div><div style="display:grid;gap:18px;margin-top:30px"><div class="o1" style="padding:26px;border-radius:999px;background:#eee6e1;font:700 42px Rubik;color:#3c0058;text-align:center">Sí, ya lo hago</div><div class="o2" style="padding:26px;border-radius:999px;background:#eee6e1;font:700 42px Rubik;color:#3c0058;text-align:center;transition:all .3s">No, prefiero al abogado</div></div><div class="vt mono" style="text-align:center;margin-top:18px;font-size:28px;color:#a43ff1;opacity:0;transition:opacity .3s">voto de Ricardo ↑</div>`, px({ left: 140, top: 1140, width: 800, padding: '44px', background: '#fff', borderRadius: 40, boxShadow: '0 40px 80px -30px #000', opacity: 0 }));
+    o.appendChild(p);
+    const o2 = p.querySelector('.o2'), vt = p.querySelector('.vt');
+    const cap = captions(o, { top: 1500 });
+    const VOTE = J + 41.9; // "…siempre el mejor consejo es ve con un experto"
+    return t => {
+      const on = t > EP.qTypeStart && t < J + 2.5 || t > VOTE - 0.5 && t < VOTE + 8;
+      p.style.opacity = on ? 1 : 0;
+      Object.assign(p.style, t >= J ? px({ top: 90, transform: 'scale(.78)', transformOrigin: '50% 0' }) : px({ top: 1140, transform: 'none' }));
+      const v = t > VOTE; o2.style.background = v ? '#a43ff1' : '#eee6e1'; o2.style.color = v ? '#fff' : '#3c0058'; vt.style.opacity = v ? 1 : 0;
+      cap(t >= J || !on ? t : -1);
+    };
+  }
+  , layout: s => ({ vm: FULL, vo: HIDE }) },
+];
+
+// ---------- motor ----------
+let cur = 0, tick = () => {}, lastSeg = null, IX = null, ixGen = 0, prevT = 0;
+const chips = $('#chips');
+F.forEach((f, i) => { const b = el('button', f.rec ? 'rec' : '', f.id); b.title = f.name; b.onclick = () => select(i); chips.appendChild(b); });
+function select(i) {
+  cur = (i + F.length) % F.length; const f = F[cur];
+  chips.querySelectorAll('button').forEach((b, j) => b.classList.toggle('on', j === cur));
+  chips.children[cur].scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  $('#info').innerHTML = `<div class="code">${f.id}${f.rec ? ' · recomendado' : ''}</div><h2>${f.name}</h2><p>${f.idea}</p><dl><div><dt>Funciona</dt><dd>${f.ok}</dd></div><div><dt>Riesgo</dt><dd>${f.risk}</dd></div></dl>`;
+  ov.innerHTML = ''; [vm, vo].forEach(v => v.style.transition = 'none');
+  const ft = f.build(ov) || (() => {});
+  const tagl = $('#tagl'); tagl.innerHTML = '';
+  const gt = guestTag(tagl, f.tagAt != null ? f.tagAt : J + 0.6, 5.2, f.tagTop);
+  const capEl = () => ov.querySelector('.cap');
+  tick = t => { ft(t); const on = gt(t); const c = capEl(); if (c && on) c.style.opacity = 0; else if (c) c.style.opacity = ''; };
+  const ixl = $('#ixl'); ixl.innerHTML = ''; IX = null; const gen = ++ixGen;
+  IntroIX.build(ixl, stage, { dock: f.dock ? { top: 1330 } : null }).then(r => { if (gen === ixGen) { IX = r; frame(true); } });
+  lastSeg = null; frame(true);
+  requestAnimationFrame(() => [vm, vo].forEach(v => v.style.transition = ''));
+  try { history.replaceState(null, '', '#' + f.id); } catch (e) {}
+}
+function applyLayout(s) {
+  const L = F[cur].layout(s);
+  vid(vm, L.vm); vid(vo, L.vo);
+}
+function frame(force) {
+  const t = vm.currentTime, s = seg(t);
+  if (s !== lastSeg || force) { applyLayout(s); lastSeg = s; }
+  if (Math.abs(vo.currentTime - t) > 0.2) vo.currentTime = t;
+  tick(t);
+  if (IX) {
+    IX.tl.seek(Math.min(t, IX.end));
+    const hideAt = F[cur].dock ? EP.qTypeStart : IX.end;
+    IX.root.style.opacity = t < hideAt ? 1 : 0; IX.root.style.transition = 'opacity .35s';
+  }
+  if (!vm.paused && t > prevT && t - prevT < 0.5) IntroIX.sfx.forEach(a => { if (prevT < a._t + 0.001 && t >= a._t && t < a._t + 0.3) { a.currentTime = 0; a.play().catch(() => {}); } });
+  prevT = t;
+  $('#prog').style.width = (t / EP.dur * 100) + '%';
+  $('#time').textContent = fmt(t);
+}
+(function loop() { frame(); requestAnimationFrame(loop); })();
+
+function fit() { const w = $('#frame').clientWidth; stage.style.transform = `scale(${w / 1080})`; }
+addEventListener('resize', fit); fit(); new ResizeObserver(fit).observe($('#frame'));
+$('#joinmark').style.left = (J / EP.dur * 100) + '%';
+
+function play() { vm.play(); vo.play(); $('#tap').classList.add('hide'); $('#pp').textContent = '❚❚ Pausa'; }
+function pause() { vm.pause(); vo.pause(); $('#pp').textContent = '▶︎ Play'; }
+$('#tap').onclick = play;
+$('#pp').onclick = () => vm.paused ? play() : pause();
+$('#jump').onclick = () => { vm.currentTime = vo.currentTime = J - 5; play(); };
+$('#bar').onclick = e => { const r = e.currentTarget.getBoundingClientRect(); vm.currentTime = vo.currentTime = (e.clientX - r.left) / r.width * EP.dur; };
+vm.addEventListener('ended', () => { vm.currentTime = vo.currentTime = 0; pause(); });
+addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') select(cur + 1);
+  else if (e.key === 'ArrowLeft') select(cur - 1);
+  else if (e.key === ' ') { e.preventDefault(); vm.paused ? play() : pause(); }
+});
+const start = F.findIndex(f => '#' + f.id === location.hash);
+select(start >= 0 ? start : 2);
+</script>
+</body>
+</html>
