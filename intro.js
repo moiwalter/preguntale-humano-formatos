@@ -5,7 +5,7 @@
 (function () {
   const CSS = `
   @font-face{font-family:"Permanent Marker IX";src:url("media/PermanentMarker-Regular.ttf") format("truetype")}
-  #ix-scrim{position:absolute;inset:0;background:radial-gradient(70% 45% at 50% 50%,#12041bcc,#12041b66)}
+  #ix-scrim{position:absolute;inset:0}
   #ix-stage{position:absolute;inset:0}
   #ix-card-wrap{position:absolute;left:40px;width:1000px;top:800px;height:330px}
   #ix-halo{position:absolute;inset:-6px;border-radius:64px;overflow:hidden;filter:blur(34px);opacity:.7}
@@ -69,6 +69,9 @@
       const root = document.createElement('div');
       root.style.cssText = 'position:absolute;inset:0;pointer-events:none';
       root.innerHTML = HTML; parent.appendChild(root);
+      const TOP = opts.top != null ? opts.top : 800;
+      root.querySelector('#ix-card-wrap').style.top = TOP + 'px';
+      root.querySelector('#ix-scrim').style.background = `radial-gradient(75% 22% at 50% ${(TOP + 165) / 19.2}%,#12041bd9,#12041b00)`;
       await fontsReady;
       const q = s => root.querySelector(s);
       const svgNS = 'http://www.w3.org/2000/svg';
@@ -90,7 +93,7 @@
       const tl = gsap.timeline({ paused: true });
       const D = 3.4;
       tl.fromTo(q('#ix-scrim'), { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' }, 0);
-      tl.fromTo(q('#ix-stage'), { scale: 1, transformOrigin: '50% 50%' }, { scale: 1.04, duration: D, ease: 'none' }, 0);
+      tl.fromTo(q('#ix-stage'), { scale: 1, transformOrigin: `50% ${(TOP + 165) / 19.2}%` }, { scale: 1.04, duration: D, ease: 'none' }, 0);
       tl.fromTo(q('#ix-card-wrap'), { opacity: 0, y: 30, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'power3.out' }, 0);
       tl.fromTo([q('#ix-spin-rim'), q('#ix-spin-halo')], { rotation: 0 }, { rotation: 300, duration: 1.4, ease: 'none' }, 0);
       tl.fromTo(q('#ix-spark'), { rotation: -90, scale: 0.6, transformOrigin: '50% 50%' }, { rotation: 90, scale: 1, duration: 1.3, ease: 'power2.out' }, 0);
@@ -130,13 +133,13 @@
       // Salida (lo único nuevo): se va, o baja a acoplarse como caja de la pregunta.
       tl.to(q('#ix-scrim'), { opacity: 0, duration: 0.45, ease: 'power2.inOut' }, D);
       if (opts.dock) {
-        const dy = opts.dock.top - 800;
-        tl.to(q('#ix-stage'), { y: dy, scale: 1, duration: 0.6, ease: 'power3.inOut' }, D);
+        const dy = opts.dock.top - TOP;
+        tl.to(q('#ix-stage'), { y: dy, scale: 1, duration: 0.8, ease: 'power3.inOut' }, D);
       } else {
         tl.to(q('#ix-stage'), { opacity: 0, y: -40, duration: 0.4, ease: 'power2.in' }, D);
       }
-      tl.seek(0);
-      return { root, tl, end: D + 0.6 };
+      tl.progress(1, true).progress(0, true);
+      return { root, tl, end: D + 0.8 };
     },
   };
 })();
