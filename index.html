@@ -72,7 +72,7 @@ header.top p{color:var(--muted);font-size:14px}
 .pbox .hd svg{width:34px;height:34px}
 .pbox .tx{font:900 60px/1.08 Lineal;letter-spacing:-.035em;color:var(--cream);margin-top:22px;padding-right:90px}
 .pbox .ph{color:#ffffff40}
-.pbox .ph .marker{color:var(--pink);opacity:.8;font-weight:400;letter-spacing:0}
+.pbox .ph .marker{color:#fff;opacity:.9;font-weight:400;letter-spacing:0}
 .caret{display:inline-block;width:5px;height:.9em;background:var(--pink);vertical-align:-.1em;margin-left:4px;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 .send{position:absolute;right:38px;bottom:34px;width:84px;height:84px;border-radius:50%;background:var(--cream);display:grid;place-items:center;transition:all .25s}
@@ -174,8 +174,8 @@ header.top p{color:var(--muted);font-size:14px}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
-<script src="data.js?v=4"></script>
-<script src="intro.js?v=4"></script>
+<script src="data.js?v=5"></script>
+<script src="intro.js?v=5"></script>
 <script>
 const EP = window.EP, J = EP.join;
 EP.guest = { name: 'Ricardo Rodríguez', role: 'CEO y cofundador · Lawgic', short: 'Ricardo Rodríguez · CEO de Lawgic', stat: '+12,000', statLabel: 'profesionales del derecho en 10 países confían en Lawgic', chips: ['Legaltech · México', 'Stanford GSB'] };
@@ -239,7 +239,7 @@ const F = [
   build(o) {
     o.appendChild(el('div', 'abs', '', px({ left: 0, top: 0, width: 1080, height: 430, background: '#12041b' })));
     o.appendChild(el('div', 'abs', '', px({ left: 0, top: 1490, width: 1080, height: 430, background: '#12041b' })));
-    const t1 = el('div', 'abs lin', 'Pregúntale a <span class="marker" style="color:#f6cae6;font-weight:400;letter-spacing:0">un humano</span>', px({ left: 80, top: 120, fontSize: 64 }));
+    const t1 = el('div', 'abs lin', 'Pregúntale a <span class="marker" style="color:#fff;font-weight:400;letter-spacing:0">un humano</span>', px({ left: 80, top: 120, fontSize: 64 }));
     const t2 = el('div', 'abs', '', px({ left: 80, top: 230, width: 920, font: '700 40px/1.2 Rubik', color: '#d8ccd6' }));
     o.append(t1, t2);
     const cap = captions(o, { top: 1560 });

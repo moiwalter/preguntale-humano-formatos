@@ -24,7 +24,7 @@
   #ix-send-glow{position:absolute;inset:-14px;border-radius:50%;background:#f6cae6;filter:blur(18px);opacity:0}
   #ix-strike{position:absolute;left:1%;top:0;width:103%;height:100%;overflow:visible}
   #ix-human{position:absolute;left:0;top:0;width:600px;height:220px;overflow:visible}
-  #ix-human text{font-family:"Permanent Marker IX","Permanent Marker",cursive;font-size:80px;fill:#f6cae6}`;
+  #ix-human text{font-family:"Permanent Marker IX","Permanent Marker",cursive;font-size:80px;fill:#ffffff}`;
   const HTML = `
   <div id="ix-scrim"></div>
   <div id="ix-stage">
